@@ -9,9 +9,17 @@ namespace BankingSystemAPI.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public BankingContext(DbContextOptions<BankingContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer("Server=.;Database=BankingSystemDB;Trusted_Connection=True;TrustServerCertificate=True");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.User)
+                .WithMany(u => u.Transactions)
+                .HasForeignKey(t => t.UserID)
+                .OnDelete(DeleteBehavior.Cascade);  
         }
     }
 }
