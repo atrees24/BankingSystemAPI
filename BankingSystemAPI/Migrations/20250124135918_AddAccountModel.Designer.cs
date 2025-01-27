@@ -4,6 +4,7 @@ using BankingSystemAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BankingSystemAPI.Migrations
 {
     [DbContext(typeof(BankingContext))]
-    partial class BankingContextModelSnapshot : ModelSnapshot
+    [Migration("20250124135918_AddAccountModel")]
+    partial class AddAccountModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,8 +50,7 @@ namespace BankingSystemAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserID")
-                        .IsUnique();
+                    b.HasIndex("UserID");
 
                     b.ToTable("Accounts");
                 });
@@ -61,7 +63,7 @@ namespace BankingSystemAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionID"));
 
-                    b.Property<int>("AccountID")
+                    b.Property<int?>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Amount")
@@ -81,7 +83,7 @@ namespace BankingSystemAPI.Migrations
 
                     b.HasKey("TransactionID");
 
-                    b.HasIndex("AccountID");
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("UserID");
 
@@ -118,8 +120,8 @@ namespace BankingSystemAPI.Migrations
             modelBuilder.Entity("BankingSystemAPI.Models.Account", b =>
                 {
                     b.HasOne("BankingSystemAPI.Models.User", "User")
-                        .WithOne("Account")
-                        .HasForeignKey("BankingSystemAPI.Models.Account", "UserID")
+                        .WithMany()
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -128,19 +130,15 @@ namespace BankingSystemAPI.Migrations
 
             modelBuilder.Entity("BankingSystemAPI.Models.Transaction", b =>
                 {
-                    b.HasOne("BankingSystemAPI.Models.Account", "Account")
+                    b.HasOne("BankingSystemAPI.Models.Account", null)
                         .WithMany("Transactions")
-                        .HasForeignKey("AccountID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AccountId");
 
                     b.HasOne("BankingSystemAPI.Models.User", "User")
                         .WithMany("Transactions")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Account");
 
                     b.Navigation("User");
                 });
@@ -152,9 +150,6 @@ namespace BankingSystemAPI.Migrations
 
             modelBuilder.Entity("BankingSystemAPI.Models.User", b =>
                 {
-                    b.Navigation("Account")
-                        .IsRequired();
-
                     b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
