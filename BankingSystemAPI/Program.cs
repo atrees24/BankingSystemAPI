@@ -1,4 +1,5 @@
 using BankingSystemAPI.Data;
+using BankingSystemAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +18,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
         builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-}); 
+});
+
+
+builder.Services.AddScoped<TaxService>();
+builder.Services.AddScoped<InterestService>();
+builder.Services.AddScoped<OTPService>();
+builder.Services.AddScoped<EmailService>();
 
 
 
