@@ -6,7 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BankingSystemAPI.Controllers
 {
-    public class TransactionController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TransactionController : ControllerBase
     {
         private readonly BankingContext _context;
         private readonly TaxService _taxService;
@@ -23,10 +25,7 @@ namespace BankingSystemAPI.Controllers
             _emailService = emailService;
             _interestService = interestService;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+
 
         #region Withdraw
         [HttpPost("withdraw")]
