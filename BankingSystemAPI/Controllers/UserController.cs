@@ -5,18 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BankingSystemAPI.Controllers
 {
-    public class UserController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UserController : ControllerBase
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
         private readonly BankingContext _context;
 
         public UserController(BankingContext context)
         {
             _context = context;
         }
+
         [HttpPost("create-user")]
         public IActionResult CreateUser([FromBody] User user)
         {

@@ -1,4 +1,6 @@
 using BankingSystemAPI.Data;
+using BankingSystemAPI.Hubs;
+using BankingSystemAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,14 +12,27 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSignalR();
+
 builder.Services.AddDbContext<BankingContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    );
+
+builder.Services.AddDbContext<RealTimeChatContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ChatConnection"))
+    );
 
 builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll",
-        builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-}); 
+{ 
+    options.AddPolicy("AllowAll", builder => 
+         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
+
+
+builder.Services.AddScoped<TaxService>();
+builder.Services.AddScoped<InterestService>();
+builder.Services.AddScoped<OTPService>();
+builder.Services.AddScoped<EmailService>();
 
 
 
@@ -37,5 +52,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<ChatHub>("ChatHub");
 
 app.Run();
